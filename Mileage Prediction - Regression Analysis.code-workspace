@@ -1,3 +1,119 @@
-{
-	"folders": []
-}
+# **Mileage Prediction - Regression Analysis**
+-------------
+## **Objective**
+The objective of mileage prediction using regression analysis is to establish a mathematical relationship between relevant variables (such as vehicle specifications, driving conditions, etc.)
+## **This dataset was taken from the StatLib library which is maintained at Carnegie Mellon University. The dataset was used in the 1983 American Statistical Association Exposition.
+
+link - Auto mpg (UCI machine learning repository)
+
+**
+
+## **Import Library**
+import numpy as np
+import pandas as pd 
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import ttest_ind
+import statsmodels.formula.api as smf
+
+## **Import Data**
+column_names = ['MPG','Cylinders','Displacement','Horsepower','Weight',
+                'Acceleration', 'Model Year', 'Origin'] 
+raw_dataset = pd.read_csv(dataset_path, names=column_names,
+                      na_values = "?", comment='\t',
+                      sep=" ", skipinitialspace=True)
+
+dataset = raw_dataset.copy()
+dataset.tail()
+## **Describe Data**
+Some of the key metrics used to analyse fuel consumption include fuel efficiency, fuel cost per mile, and idle time. By tracking these metrics over time, businesses can identify areas where fuel consumption can be optimised and develop strategies to improve fuel efficiency.
+## **Data Visualization**
+sns.pairplot(df, x_vars=['displacement', 'horsepower', 'weight', 'acceleration', 'mpg'], y_vars=['mpg'])
+/opt/conda/lib/python3.10/site-packages/seaborn/axisgrid.py:118: UserWarning: The figure layout has changed to tight
+  self._figure.tight_layout(*args, **kwargs)
+## **Data Preprocessing**
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 398 entries, 0 to 397
+Data columns (total 9 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   mpg           398 non-null    float64
+ 1   cylinders     398 non-null    int64  
+ 2   displacement  398 non-null    float64
+ 3   horsepower    392 non-null    float64
+ 4   weight        398 non-null    int64  
+ 5   acceleration  398 non-null    float64
+ 6   model_year    398 non-null    int64  
+ 7   origin        398 non-null    object 
+ 8   name          398 non-null    object 
+dtypes: float64(4), int64(3), object(2)
+memory usage: 28.1+ KB
+
+## **Define Target Variable (y) and Feature Variables (X)**
+df.columns
+Index(['mpg', 'cylinders', 'displacement', 'horsepower', 'weight',
+       'acceleration', 'model_year', 'origin', 'name'],
+      dtype='object')
+## **Train Test Split**
+
+Now split the dataset into a training set and a test set.
+
+We will use the test set in the final evaluation of our model.
+
+train_dataset = dataset.sample(frac=0.8,random_state=0)
+test_dataset = dataset.drop(train_dataset.index)
+## **Modeling**
+Let's build our model. Here, we'll use a Sequential model with two densely connected hidden layers, and an output layer that returns a single, continuous value. The model building steps are wrapped in a function, build_model, since we'll create a second model, later on.
+
+def build_model():
+  model = keras.Sequential([
+    layers.Dense(64, activation=tf.nn.relu, input_shape=[len(train_dataset.keys())]),
+    layers.Dense(64, activation=tf.nn.relu),
+    layers.Dense(1)
+  ])
+
+  optimizer = tf.keras.optimizers.RMSprop(0.001)
+
+  model.compile(loss='mean_squared_error',
+                optimizer=optimizer,
+                metrics=['mean_absolute_error', 'mean_squared_error'])
+  return model
+
+  model = build_model()
+## **Model Evaluation**
+Use the testing data to evaluate the model's performance. Common evaluation metrics for regression tasks include Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and R-squared (R2) score. These metrics help you understand how well the model's predictions match the actual mileage values.
+## **Prediction**
+
+y_pred = lr.predict(x_test)
+
+## **Explaination**
+A Mileage Prediction Machine Learning (ML) project involves developing a model that can accurately predict the fuel efficiency or mileage of a vehicle based on certain input features. Here's an explanation of the key steps and components involved in such a project:
+
+Data Collection and Preprocessing:
+Gather a dataset that contains information about various vehicles, including their specifications and associated mileage. The dataset should include features like engine size, weight, horsepower, and other relevant factors that could impact fuel efficiency. Clean and preprocess the data to handle missing values, outliers, and categorical variables.
+
+Feature Selection/Engineering:
+Identify the most relevant features that could contribute to predicting mileage accurately. You might need to transform or engineer features to make them more suitable for modeling. For example, you could create new features like "engine efficiency" by combining existing features.
+
+Data Splitting:
+Split the dataset into training and testing subsets. The training subset will be used to train the model, while the testing subset will be used to evaluate its performance on unseen data.
+
+Model Selection:
+Choose an appropriate regression algorithm for your mileage prediction task. Linear Regression is a common choice for such problems, but you can also explore other algorithms like Random Forest Regression, Gradient Boosting, or Neural Networks.
+
+Model Training:
+Train the selected model using the training data. During training, the model learns the relationships between the input features and the target (mileage) by adjusting its internal parameters.
+
+Model Evaluation:
+Use the testing data to evaluate the model's performance. Common evaluation metrics for regression tasks include Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and R-squared (R2) score. These metrics help you understand how well the model's predictions match the actual mileage values.
+
+Hyperparameter Tuning (Optional):
+If applicable, tune the hyperparameters of the chosen algorithm to optimize the model's performance. Hyperparameters control aspects of the algorithm's behavior, such as regularization strength in Linear Regression or the number of trees in a Random Forest.
+
+Prediction and Deployment (Optional):
+Once you're satisfied with the model's performance, you can deploy it for making real-world predictions. Users could input vehicle specifications, and the model would provide an estimated mileage.
+
+Iterative Refinement:
+If your model's performance is not satisfactory, you can revisit earlier steps to improve it. This might involve collecting more data, experimenting with different features, trying different algorithms, or fine-tuning hyperparameters.
+Overall, a Mileage Prediction ML project demonstrates how machine learning can be applied to real-world problems in the automotive domain, providing insights into the factors that affect vehicle fuel efficiency and offering a useful tool for vehicle buyers, manufacturers, and enthusiasts.
+
